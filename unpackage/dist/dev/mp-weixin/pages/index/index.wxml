@@ -1,0 +1,1 @@
+<view class="slider"><swiper autoplay="{{true}}" indicator-dots="{{true}}" circular="{{true}}"><block wx:for="{{swiperList}}" wx:for-item="item" wx:for-index="index"><swiper-item class="swiper_item" item-id><image src="{{'https://www.lpllfd.cn/static/dingcan/'+item.img}}" data-item="{{item.name}}" mode="widthFix"></image></swiper-item></block></swiper></view>
