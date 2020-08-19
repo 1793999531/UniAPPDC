@@ -1,0 +1,71 @@
+
+page {
+	padding: 5rpx;
+}
+.title {
+	font-size: 55rpx;
+	height: 120rpx;
+	background-color: #6aa;
+}
+.food_wrap {
+	margin-top: 30rpx;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+}
+.title,
+.foodId,
+.foodImg,
+.foodName,
+.foodPrice,
+.foodNum,
+.delBut_wrap {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	        justify-content: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	        align-items: center;
+}
+.food_wrap>.foodImg {
+	-webkit-box-flex: 4;
+	-webkit-flex: 4;
+	        flex: 4;
+	height: 100rpx;
+	border-radius: 100rpx;
+}
+.food_wrap>.foodId {
+	-webkit-box-flex: 1;
+	-webkit-flex: 1;
+	        flex: 1;
+}
+.food_wrap>.foodName {
+	-webkit-box-flex: 2;
+	-webkit-flex: 2;
+	        flex: 2;
+}
+.food_wrap>.foodPrice {
+	-webkit-box-flex: 2;
+	-webkit-flex: 2;
+	        flex: 2;
+}
+.food_wrap>.foodNum {
+	-webkit-box-flex: 2;
+	-webkit-flex: 2;
+	        flex: 2;
+}
+.food_wrap>.delBut_wrap {
+	-webkit-box-flex: 2;
+	-webkit-flex: 2;
+	        flex: 2;
+}
+.footer_wrap {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	margin-top: 30rpx;
+}
+

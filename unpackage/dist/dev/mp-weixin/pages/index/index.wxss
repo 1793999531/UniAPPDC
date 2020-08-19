@@ -1,59 +1,61 @@
 
-page{
-  padding: 5rpx;
+page {
+	padding: 5rpx;
 }
-.slider{
-  margin-top: 10rpx;
+.slider {
+	margin-top: 10rpx;
 }
-.menu_wrap{
-  -webkit-flex-wrap: wrap;
-          flex-wrap: wrap;
-  margin-top: 10rpx;
+.menu_wrap {
+	-webkit-flex-wrap: wrap;
+	        flex-wrap: wrap;
+	margin-top: 10rpx;
 }
-.food_wrap{
-  width: 50%;
-  display: inline-block;
-  padding: 10rpx;
-  margin-top: 10rpx;
+.food_wrap {
+	width: 45%;
+	display: inline-block;
+	padding: 10rpx;
+	margin-top: 10rpx;
 }
-.foodCount{
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
+.foodCount {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
 }
-.reduce,.plus{
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-          flex: 1;
+.reduce,
+.plus {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-flex: 1;
+	-webkit-flex: 1;
+	        flex: 1;
 }
-.foodNum{
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-flex: 3;
-  -webkit-flex: 3;
-          flex: 3;
+.foodNum {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-flex: 3;
+	-webkit-flex: 3;
+	        flex: 3;
+	width: 40px;
+	text-align: center;
 }
-.food_wrap image{
-  width: 320rpx;
+.food_wrap image {
+	width: 320rpx;
 }
-.foodPrice,.foodName{
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-          justify-content: center;
+.foodPrice,
+.foodName {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	        align-items: center;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	        justify-content: center;
 }
-.confirm_wrap{
-  margin-top: 10rpx;
+.confirm_wrap {
+	margin-top: 10rpx;
 }
-
-
 
