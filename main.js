@@ -9,4 +9,42 @@ Vue.prototype.$store = store
 const app = new Vue({
     ...App
 })
+Vue.prototype.wxRequest= function(method, url, data, callback){
+	  console.log(method,url,data,callback)
+	    return new Promise(function (resolve, reject) {
+	      if(data){
+	        wx.request({
+	          url: url,
+	          method: method,
+	          header: { 'content-type': 'application/json' },
+	          dataType: 'json',
+	          data: data,
+	          responseType: 'text',
+	          success: (data) => {
+	            if (callback) {
+	              callback(data)
+	            }
+	            resolve(data)
+	          }
+	        })
+	      }else{
+	        wx.request({
+	          url: url,
+	          method: method,
+	          header: { 'content-type': 'application/json' },
+	          dataType: 'json',
+	          responseType: 'text',
+	          success: (data) => {
+	            if (callback) {
+	              callback(data)
+	            }
+	            resolve(data)
+	          },
+	          fail:(err)=>{
+	            console.log(err)
+	          }
+	        })
+	      }
+	    })
+}
 app.$mount()

@@ -16,13 +16,13 @@
 				<view class="foodName">{{item.name}}</view>
 				<view class="foodPrice">{{item.price}}</view>
 				<view class="foodNum">{{item.num}}</view>
-				<view class="delBut_wrap"> <button class="delBut" bindtap="del" :data-id="item.id" style="font-size: 30rpx;background-color: red;color: white;"
+				<view class="delBut_wrap"> <button class="delBut" @click="del(index)" :data-id="item.id" 
 					 size="mini">删除</button></view>
 			</view>
 		</view>
 		<view class="footer_wrap">
-			<button @click="pay()" style="width:150rpx;font-size: 31rpx;" size="mini">去支付</button>
-			<button @click="cancelOrder()" style="width:200rpx;font-size: 31rpx;" size="mini">取消订单</button>
+			<button class="pay" @click="pay()" size="mini">去支付</button>
+			<button class="cancel" @click="cancelOrder()" size="mini">取消订单</button>
 			需支付：{{getTotal}}￥
 		</view>
 	</view>
@@ -44,23 +44,27 @@
 		},
 		methods: {
 			//删除菜品函数
-			del: function(e) {
+			del(index) {
 				let that = this
-				let curId = e.currentTarget.dataset.id
-				console.log(e.currentTarget.dataset.id)
-				common.wxRequest("delete", that.orderUrl + "&userName=" + that.userInfo.nickName + "&id=" + curId, null,
-					function(res) {
-						console.log(res.data)
-						that.getUserFoodInfo()
-					})
+				that.$store.state.menu[index].num = '';
+				//更新支付金额
+				that.$store.dispatch('countTotal')
+				
 			},
 			//支付
 			pay() {
 				let that = this
 				let id; //数据库中已购买的订单长度
 				let userFoodInfo = that.userFoodInfo;
-				console.log("pay-----")
-				console.log(that.URInfo)
+				let flag = false;
+				// console.log("pay-----")
+				// console.log(that.URInfo)
+				for(let item of that.$store.state.menu){
+					if(item.num!==''){
+						flag = true;
+					}
+				}
+				
 				if (this.userInfo) {
 					if (that.URInfo.length == 0) {
 						wx.showToast({
@@ -68,32 +72,30 @@
 							duration: 1500,
 						});
 
-					} else if (userFoodInfo == "") {
+					} else if (!flag) {
 						wx.showToast({
 							title: '你还未选取菜品',
 							duration: 1500,
 						});
 					} else {
-						common.wxRequest("get", that.baseUrl+"?coll=houtaiOrder&doc=account", null, function(res) {
+						that.wxRequest("get", that.baseUrl+"?coll=houtaiOrder&doc=account", null, function(res) {
 							console.log(res)
 							if (res.data.length != 0) {
 								id = res.data.length
 							} else {
 								id = 0
 							}
-							console.log("-------c:" + id)
+							console.log("-------c:" + that.$store.state.total)
 							console.log(that.URInfo)
 							var recData = {
 								name: that.URInfo.name,
 								address: that.URInfo.address,
 								phone: that.URInfo.phone,
-								priTotal: that.total,
+								priTotal: that.$store.state.total,
 								id: id + 1 + ""
 							}
 							console.log(recData)
-							common.wxRequest("post", that.baseUrl+"?coll=houtaiOrder&doc=account", recData, function(res) {
-								console.log("insert to order")
-							})
+							
 							console.log("------------aaa")
 
 							if (id == 0) {
@@ -101,34 +103,43 @@
 							} else {
 								id = id + 1;
 							}
-							console.log("-------b:" + id)
-							console.log(userFoodInfo)
+							
+							console.log(that.$store.state.menu)
 							//把所买菜品post进数据库
-							for (var i = 0; i < userFoodInfo.length; i++) {
-								var recOrder = {
-									imgUrl: userFoodInfo[i].imgSrc,
-									foodName: userFoodInfo[i].name,
-									foodPrice: userFoodInfo[i].price,
-									foodNum: userFoodInfo[i].foodNum,
-									flag: i + 1,
-									id: id + ""
-								}
-								console.log("--------")
-								console.log(recOrder)
-								common.wxRequest("post", that.baseUrl+"?coll=houtaiOrder&doc=order", recOrder, function(res) {
-									console.log("insert to order")
-									common.wxRequest("delete", that.orderUrl + "&userName=" + that.userInfo.nickName +
-										"&delAll=true", null,
-										function(res) {
-											console.log("delete")
+							for (var i = 0; i < that.$store.state.menu.length; i++) {
+					
+								// console.log(that.$store.state.menu[i].num!=='',that.$store.state.menu[i].num)
+								if(that.$store.state.menu[i].num!==''){
+									var recOrder = {
+										imgUrl: that.$store.state.menu[i].img,
+										foodName: that.$store.state.menu[i].name,
+										foodPrice: that.$store.state.menu[i].price,
+										foodNum: that.$store.state.menu[i].num,
+										flag: i + 1,
+										id: id + ""
+									};
+									
+									((i)=>{
+										console.log(i)
+										common.wxRequest("post", that.baseUrl+"?coll=houtaiOrder&doc=order", recOrder, function(res) {
+											// console.log("insert to order")
+											//console.log(that.$store.state.menu,i)
+											//console.log(that.$store.state.menu[i],that.$store.state.menu[i].num)
+											that.$store.state.menu[i].num = ''
+											wx.showToast({
+												title: '支付成功',
+												duration: 1500,
+											});
 										})
-									// that.getUserFoodInfo()
-									wx.showToast({
-										title: '支付成功',
-										duration: 1500,
-									});
-								})
+									})(i)
+									
+								}
+								
 							}
+							common.wxRequest("post", that.baseUrl+"?coll=houtaiOrder&doc=account", recData, function(res) {
+								console.log("insert to account")
+							})
+							that.$store.state.total = 0;
 						})
 					}
 				} else {
@@ -140,39 +151,31 @@
 
 			},
 			//取消订单
-			// cancelOrder: function () {
-			//   console.log(this.userInfo)
-			//   if (this.userFoodInfo) {
-			//     common.wxRequest("delete", this.orderUrl + "&userName=" + this.userInfo.nickName + "&delAll=true", null, function (res) {
-			//       console.log(res)
-			//     })
-			//     this.getUserFoodInfo()
-			//     wx.showToast({
-			//       title: '已取消',
-			//       duration: 1500,
-			//     });
-			//   }
-
-			// }
+			cancelOrder: function () {
+				var flag = false;
+			  for(var item of this.$store.state.menu){
+				  if(item.num!==''){
+					  item.num = ''
+					  flag = true;
+				  }
+				  
+			  }
+				if(flag){
+					this.$store.dispatch('countTotal')
+					wx.showToast({
+					  title: '已取消',
+					  duration: 1500,
+					});
+				}
+			}
 
 		},
 		computed: {
 			userFoodInfo() {
-
-				setTimeout(() => {
-					console.log('computed', this.$store.state.menu)
-
-				}, 1500)
 				return this.$store.state.menu
 			},
 			getTotal() {
-
-
-				console.log('hhhaaa---', this.$store.state.total)
-
 				return this.$store.state.total
-
-
 			}
 		},
 		/**
@@ -200,14 +203,7 @@
 		 * 生命周期函数--监听页面显示
 		 */
 		onShow: function() {
-			// setTimeout(() => {
-			// 	console.log('onShow', this.$store.state.menu)
-			// }, 1500)
-
-
-			// app.globalData.total2 += 5
-			// this.getUserFoodInfo()
-
+			// console.log("onshow")
 			 let that = this
 			 //获取用户注册信息
 			 common.wxRequest("get", that.usersUrl + "&userName=" + that.userInfo.nickName, null, function (res) {
@@ -215,7 +211,7 @@
 			   if(res.data[0].address!=""&&res.data[0].phone!=""){
 			       that.URInfo= res.data[0]
 			   }
-			   console.log("onshow")
+			   
 			   console.log(that.URInfo)
 			 })
 		}
@@ -276,7 +272,23 @@
 	.food_wrap>.delBut_wrap {
 		flex: 2;
 	}
-
+	
+	.delBut_wrap>.delBut{
+		padding: 0 10rpx;
+		font-size: 30rpx;
+		background-color: red;
+		color: white;
+	}
+/* 	.food_wrap>.pay{
+		width:150rpx;
+		font-size: 31rpx;
+		padding: 0;
+	}
+	.food_wrap>.cancel{
+		width:200rpx;
+		font-size: 31rpx;
+		padding: 0;
+	} */
 	.footer_wrap {
 		display: flex;
 		margin-top: 30rpx;

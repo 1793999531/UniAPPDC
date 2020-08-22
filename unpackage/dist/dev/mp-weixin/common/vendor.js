@@ -7775,14 +7775,13 @@ function normalizeComponent (
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
 var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ 12));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}
 _vue.default.use(_vuex.default);var _default =
 
 new _vuex.default.Store({
   state: _defineProperty({
     test: "hhh",
-    cartInfo: [1],
     menu: [],
     total: '',
     userInfo: '' }, "total",
@@ -7790,66 +7789,44 @@ new _vuex.default.Store({
 
 
   actions: {
+
     //获得轮播图列表
     getSwiperList: function getSwiperList(context) {
+      uni.login({
+        provider: 'weixin',
+        success: function success(loginRes) {
+          console.log(loginRes.authResult);
+          // 获取用户信息
+          uni.getUserInfo({
+            provider: 'weixin',
+            success: function success(infoRes) {
+              console.log('用户昵称为：' + infoRes.userInfo.nickName);
+            } });
+
+        } });
+
+
+      uni.showLoading({
+        title: '加载中' });
+
       wx.request({
         url: "https://www.lpllfd.cn/dingcan?coll=dingcanDB&doc=menu",
         success: function success(res) {
-          console.log(res.data);
-          console.log("获得轮播图列表");
-          // let that = this;
-          //let swiperList = res.data
           context.state.menu = res.data;
           var len = res.data.length;
-          console.log(res.data);
-
-          // if (len != 0) {
-          //   if (res.statusCode == 200) {
-          //       context.state.swiperList = swiperList
-          //   }
-          //   // for (var i = 0; i < len; i++) {
-          //   //   var temp = {
-          //   //     id: swiperList[i].id,
-          //   //     imgSrc:swiperList[i].img,
-          //   //     name: swiperList[i].name,
-          //   //     price: swiperList[i].Price,
-          //   //     foodNum: null,
-          //   //     userName: this.userInfo.nickName,
-          //   //     foodSequenceFlag:this.foodSequenceFlag+1
-          //   //   }
-          //   //   this.foodNum.push(temp)
-          //   // }
-
-          // }
-          console.log("获得轮播图列表结束");
+          uni.hideLoading();
         } });
 
 
     },
-    getCartInfo: function getCartInfo(context) {
-      console.log("getcartinfo");
-      console.log(context.state.cartInfo);
-      if (context.state.cartInfo != null) {
-        return context.state.cartInfo;
-      } else {
-        return null;
-      }
-    },
     countTotal: function countTotal(context) {
-      console.log('index.js countTotal fn');
-      console.log(context.state.menu, '-----', context.state.menu[0].price);
+      // console.log('index.js countTotal fn')
       var total = 0;
       for (var i in context.state.menu) {
-
-        console.log(typeof context.state.menu[i].num);
         if (typeof context.state.menu[i].num == 'number') {
-          console.log(context.state.menu[i], context.state.menu[i].price);
-          console.log();
           total += context.state.menu[i].price * context.state.menu[i].num;
         }
-
       }
-      console.log(total, '-----');
       context.state.total = total;
     },
     getUserInfo: function getUserInfo(context) {
@@ -7869,6 +7846,7 @@ new _vuex.default.Store({
       // 获取用户信息
       wx.getSetting({
         success: function success(res) {
+
           if (res.authSetting['scope.userInfo']) {
             // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
             wx.getUserInfo({
@@ -7877,11 +7855,6 @@ new _vuex.default.Store({
                 // 可以将 res 发送给后台解码出 unionId
                 context.state.userInfo = res.userInfo;
 
-                // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-                // 所以此处加入 callback 以防止这种情况
-                // if (this.userInfoReadyCallback) {
-                //   this.userInfoReadyCallback(res)
-                // }
               } });
 
           }
@@ -7890,12 +7863,23 @@ new _vuex.default.Store({
           console.log('wx.getSetting fail :', res);
         } });
 
+    },
+    wxLogin: function wxLogin(context) {
+
+    },
+    wxLoginTest: function wxLoginTest() {
+      uni.login({
+        // provider: 'weixin',
+        success: function success(loginRes) {
+          console.log('wxlogin ---');
+          console.log(loginRes);
+        } });
+
     } },
 
-  mutations: {
-    getCartInfo: function getCartInfo(state) {
-      return "bbb";
-    } } });exports.default = _default;
+
+  mutations: {} });exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 /* 12 */
@@ -9654,16 +9638,16 @@ if (hadRuntime) {
 var onLaunch = function onLaunch() {var _this = this;
   console.log(this.globalData);
   // 展示本地存储能力
-  var logs = wx.getStorageSync('logs') || [];
-  logs.unshift(Date.now());
-  wx.setStorageSync('logs', logs);
+  // var logs = wx.getStorageSync('logs') || []
+  // logs.unshift(Date.now())
+  // wx.setStorageSync('logs', logs)
   // 登录
-  wx.login({
-    success: function success(res) {
-      // 发送 res.code 到后台换取 openId, sessionKey, unionI
-      console.log('wx.login suc :', res);
-    } });
-
+  // wx.login({
+  //   success: res => {
+  //     // 发送 res.code 到后台换取 openId, sessionKey, unionI
+  //  console.log('wx.login suc :' , res)
+  //   }
+  // })
   // 获取用户信息
   wx.getSetting({
     success: function success(res) {
@@ -9688,7 +9672,6 @@ var onLaunch = function onLaunch() {var _this = this;
       console.log('wx.getSetting fail :', res);
     } });
 
-  console.log("tongguo ---1");
 };
 var globalData = {
   userInfo: null,

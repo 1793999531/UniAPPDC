@@ -156,9 +156,6 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 
 
 
-
-
-
 var _runtime = _interopRequireDefault(__webpack_require__(/*! ../../static/libs/runtime.js */ 40));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
 //
 //
@@ -180,12 +177,12 @@ var _runtime = _interopRequireDefault(__webpack_require__(/*! ../../static/libs/
 //
 //
 //
-//index.js
 //获取应用实例
-// const app = getApp()
-var app = __webpack_require__(/*! ../../static/libs/wxApi.js */ 22);console.log(app);app.onLaunch();var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var QQMapWX = __webpack_require__(/*! ../../static/libs/qqmap-wx-jssdk.js */ 41);var qqmapsdk;var _default = { data: function data() {return { usersUrl: 'https://www.lpllfd.cn/dingcan?coll=wxDB&doc=users', modifyDataAble: true, //是否可以编辑资料
+var app = __webpack_require__(/*! ../../static/libs/wxApi.js */ 22);console.log(app);app.onLaunch();var QQMapWX = __webpack_require__(/*! ../../static/libs/qqmap-wx-jssdk.js */ 41);var qqmapsdk;var _default = { data: function data() {return { usersUrl: 'https://www.lpllfd.cn/dingcan?coll=wxDB&doc=users', modifyDataAble: true, //是否可以编辑资料
       modifyDataButText: '点击编辑资料', userAddress: '', userPhone: '', userInfo: {}, hasUserInfo: false, canIUse: true, address: "" };}, methods: { //事件处理函数
-    bindViewTap: function bindViewTap() {wx.navigateTo({ url: '../logs/logs' });}, reload: function reload() {console.log("reload");
+    bindViewTap: function bindViewTap() {wx.navigateTo({ url: '../logs/logs' });},
+    reload: function reload() {
+      console.log("reload");
       //this.onReady()
     },
     getLocation: function getLocation() {
@@ -225,16 +222,15 @@ var app = __webpack_require__(/*! ../../static/libs/wxApi.js */ 22);console.log(
           phone: that.userPhone,
           address: that.userAddress };
 
-        common.wxRequest("get", this.usersUrl + '&userName=' + that.userInfo.nickName, null, function (res) {
+        that.wxRequest("get", this.usersUrl + '&userName=' + that.userInfo.nickName, null, function (res) {
           console.log(res.data.length);
           if (res.data.length != 0) {
             console.log('record 1 ---', data);
-            common.wxRequest("put", that.usersUrl + '&userName=' + that.userInfo.nickName, data, null);
+            that.wxRequest("put", that.usersUrl + '&userName=' + that.userInfo.nickName, data, null);
           } else {
-            common.wxRequest("post", that.usersUrl, data);
+            that.wxRequest("post", that.usersUrl, data);
           }
         });
-        //common.wxRequest("post",this.usersUrl+'&userName='+this.userInfo.nickName,data)
         wx.showToast({
           title: '修改成功',
           duration: 1500,
@@ -251,7 +247,7 @@ var app = __webpack_require__(/*! ../../static/libs/wxApi.js */ 22);console.log(
       var that = this;
       //获取当前登录的用户信息
       // console.log(this.usersUrl,'--------aa')
-      var curUserInfo = common.wxRequest("get", this.usersUrl + '&userName=' + this.userInfo.nickName, null);
+      var curUserInfo = that.wxRequest("get", this.usersUrl + '&userName=' + this.userInfo.nickName, null);
       // console.log(typeof(curUserInfo))
       curUserInfo.then(function (obj) {
         console.log('--------22');

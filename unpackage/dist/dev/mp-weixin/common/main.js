@@ -18,6 +18,44 @@ _vue.default.prototype.$store = _store.default;
 var app = new _vue.default(_objectSpread({},
 _App.default));
 
+_vue.default.prototype.wxRequest = function (method, url, data, callback) {
+  console.log(method, url, data, callback);
+  return new Promise(function (resolve, reject) {
+    if (data) {
+      wx.request({
+        url: url,
+        method: method,
+        header: { 'content-type': 'application/json' },
+        dataType: 'json',
+        data: data,
+        responseType: 'text',
+        success: function success(data) {
+          if (callback) {
+            callback(data);
+          }
+          resolve(data);
+        } });
+
+    } else {
+      wx.request({
+        url: url,
+        method: method,
+        header: { 'content-type': 'application/json' },
+        dataType: 'json',
+        responseType: 'text',
+        success: function success(data) {
+          if (callback) {
+            callback(data);
+          }
+          resolve(data);
+        },
+        fail: function fail(err) {
+          console.log(err);
+        } });
+
+    }
+  });
+};
 createApp(app).$mount();
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["createApp"]))
 

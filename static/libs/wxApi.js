@@ -3,16 +3,16 @@
 	var onLaunch= function () {
 	  console.log(this.globalData)
 	  // 展示本地存储能力
-	  var logs = wx.getStorageSync('logs') || []
-	  logs.unshift(Date.now())
-	  wx.setStorageSync('logs', logs)
+	  // var logs = wx.getStorageSync('logs') || []
+	  // logs.unshift(Date.now())
+	  // wx.setStorageSync('logs', logs)
 	  // 登录
-	  wx.login({
-	    success: res => {
-	      // 发送 res.code 到后台换取 openId, sessionKey, unionI
-		  console.log('wx.login suc :' , res)
-	    }
-	  })
+	  // wx.login({
+	  //   success: res => {
+	  //     // 发送 res.code 到后台换取 openId, sessionKey, unionI
+		 //  console.log('wx.login suc :' , res)
+	  //   }
+	  // })
 	  // 获取用户信息
 	  wx.getSetting({
 	    success: res => {
@@ -37,7 +37,6 @@
 			console.log('wx.getSetting fail :' , res)
 		}
 	  })
-	  console.log("tongguo ---1")
 	}
 	var globalData =  {
 	  userInfo: null,

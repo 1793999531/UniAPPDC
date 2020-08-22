@@ -130,7 +130,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; //
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _createForOfIteratorHelper(o) {if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) {var i = 0;var F = function F() {};return { s: F, n: function n() {if (i >= o.length) return { done: true };return { done: false, value: o[i++] };}, e: function e(_e) {throw _e;}, f: F };}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}var it,normalCompletion = true,didErr = false,err;return { s: function s() {it = o[Symbol.iterator]();}, n: function n() {var step = it.next();normalCompletion = step.done;return step;}, e: function e(_e2) {didErr = true;err = _e2;}, f: function f() {try {if (!normalCompletion && it.return != null) it.return();} finally {if (didErr) throw err;}} };}function _unsupportedIterableToArray(o, minLen) {if (!o) return;if (typeof o === "string") return _arrayLikeToArray(o, minLen);var n = Object.prototype.toString.call(o).slice(8, -1);if (n === "Object" && o.constructor) n = o.constructor.name;if (n === "Map" || n === "Set") return Array.from(n);if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);}function _arrayLikeToArray(arr, len) {if (len == null || len > arr.length) len = arr.length;for (var i = 0, arr2 = new Array(len); i < len; i++) {arr2[i] = arr[i];}return arr2;} //
 //
 //
 //
@@ -176,23 +176,27 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
   },
   methods: {
     //删除菜品函数
-    del: function del(e) {
+    del: function del(index) {
       var that = this;
-      var curId = e.currentTarget.dataset.id;
-      console.log(e.currentTarget.dataset.id);
-      common.wxRequest("delete", that.orderUrl + "&userName=" + that.userInfo.nickName + "&id=" + curId, null,
-      function (res) {
-        console.log(res.data);
-        that.getUserFoodInfo();
-      });
+      that.$store.state.menu[index].num = '';
+      //更新支付金额
+      that.$store.dispatch('countTotal');
+
     },
     //支付
     pay: function pay() {
       var that = this;
       var id; //数据库中已购买的订单长度
       var userFoodInfo = that.userFoodInfo;
-      console.log("pay-----");
-      console.log(that.URInfo);
+      var flag = false;
+      // console.log("pay-----")
+      // console.log(that.URInfo)
+      var _iterator = _createForOfIteratorHelper(that.$store.state.menu),_step;try {for (_iterator.s(); !(_step = _iterator.n()).done;) {var item = _step.value;
+          if (item.num !== '') {
+            flag = true;
+          }
+        }} catch (err) {_iterator.e(err);} finally {_iterator.f();}
+
       if (this.userInfo) {
         if (that.URInfo.length == 0) {
           wx.showToast({
@@ -200,32 +204,30 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
             duration: 1500 });
 
 
-        } else if (userFoodInfo == "") {
+        } else if (!flag) {
           wx.showToast({
             title: '你还未选取菜品',
             duration: 1500 });
 
         } else {
-          common.wxRequest("get", that.baseUrl + "?coll=houtaiOrder&doc=account", null, function (res) {
+          that.wxRequest("get", that.baseUrl + "?coll=houtaiOrder&doc=account", null, function (res) {
             console.log(res);
             if (res.data.length != 0) {
               id = res.data.length;
             } else {
               id = 0;
             }
-            console.log("-------c:" + id);
+            console.log("-------c:" + that.$store.state.total);
             console.log(that.URInfo);
             var recData = {
               name: that.URInfo.name,
               address: that.URInfo.address,
               phone: that.URInfo.phone,
-              priTotal: that.total,
+              priTotal: that.$store.state.total,
               id: id + 1 + "" };
 
             console.log(recData);
-            common.wxRequest("post", that.baseUrl + "?coll=houtaiOrder&doc=account", recData, function (res) {
-              console.log("insert to order");
-            });
+
             console.log("------------aaa");
 
             if (id == 0) {
@@ -233,34 +235,43 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
             } else {
               id = id + 1;
             }
-            console.log("-------b:" + id);
-            console.log(userFoodInfo);
+
+            console.log(that.$store.state.menu);
             //把所买菜品post进数据库
-            for (var i = 0; i < userFoodInfo.length; i++) {
-              var recOrder = {
-                imgUrl: userFoodInfo[i].imgSrc,
-                foodName: userFoodInfo[i].name,
-                foodPrice: userFoodInfo[i].price,
-                foodNum: userFoodInfo[i].foodNum,
-                flag: i + 1,
-                id: id + "" };
+            for (var i = 0; i < that.$store.state.menu.length; i++) {
 
-              console.log("--------");
-              console.log(recOrder);
-              common.wxRequest("post", that.baseUrl + "?coll=houtaiOrder&doc=order", recOrder, function (res) {
-                console.log("insert to order");
-                common.wxRequest("delete", that.orderUrl + "&userName=" + that.userInfo.nickName +
-                "&delAll=true", null,
-                function (res) {
-                  console.log("delete");
-                });
-                // that.getUserFoodInfo()
-                wx.showToast({
-                  title: '支付成功',
-                  duration: 1500 });
+              // console.log(that.$store.state.menu[i].num!=='',that.$store.state.menu[i].num)
+              if (that.$store.state.menu[i].num !== '') {
+                var recOrder = {
+                  imgUrl: that.$store.state.menu[i].img,
+                  foodName: that.$store.state.menu[i].name,
+                  foodPrice: that.$store.state.menu[i].price,
+                  foodNum: that.$store.state.menu[i].num,
+                  flag: i + 1,
+                  id: id + "" };
 
-              });
+
+                (function (i) {
+                  console.log(i);
+                  common.wxRequest("post", that.baseUrl + "?coll=houtaiOrder&doc=order", recOrder, function (res) {
+                    // console.log("insert to order")
+                    //console.log(that.$store.state.menu,i)
+                    //console.log(that.$store.state.menu[i],that.$store.state.menu[i].num)
+                    that.$store.state.menu[i].num = '';
+                    wx.showToast({
+                      title: '支付成功',
+                      duration: 1500 });
+
+                  });
+                })(i);
+
+              }
+
             }
+            common.wxRequest("post", that.baseUrl + "?coll=houtaiOrder&doc=account", recData, function (res) {
+              console.log("insert to account");
+            });
+            that.$store.state.total = 0;
           });
         }
       } else {
@@ -270,47 +281,39 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
 
       }
 
-    }
+    },
     //取消订单
-    // cancelOrder: function () {
-    //   console.log(this.userInfo)
-    //   if (this.userFoodInfo) {
-    //     common.wxRequest("delete", this.orderUrl + "&userName=" + this.userInfo.nickName + "&delAll=true", null, function (res) {
-    //       console.log(res)
-    //     })
-    //     this.getUserFoodInfo()
-    //     wx.showToast({
-    //       title: '已取消',
-    //       duration: 1500,
-    //     });
-    //   }
+    cancelOrder: function cancelOrder() {
+      var flag = false;var _iterator2 = _createForOfIteratorHelper(
+      this.$store.state.menu),_step2;try {for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {var item = _step2.value;
+          if (item.num !== '') {
+            item.num = '';
+            flag = true;
+          }
 
-    // }
-  },
+        }} catch (err) {_iterator2.e(err);} finally {_iterator2.f();}
+      if (flag) {
+        this.$store.dispatch('countTotal');
+        wx.showToast({
+          title: '已取消',
+          duration: 1500 });
+
+      }
+    } },
+
 
   computed: {
-    userFoodInfo: function userFoodInfo() {var _this = this;
-
-      setTimeout(function () {
-        console.log('computed', _this.$store.state.menu);
-
-      }, 1500);
+    userFoodInfo: function userFoodInfo() {
       return this.$store.state.menu;
     },
     getTotal: function getTotal() {
-
-
-      console.log('hhhaaa---', this.$store.state.total);
-
       return this.$store.state.total;
-
-
     } },
 
   /**
           * 生命周期函数--监听页面加载
           */
-  onLoad: function onLoad(options) {var _this2 = this;
+  onLoad: function onLoad(options) {var _this = this;
 
     console.log("cart.vue onLoad");
     var that = this;
@@ -321,7 +324,7 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
     } else {
       wx.getUserInfo({
         success: function success(res) {
-          _this2.userInfo = res.userInfo;
+          _this.userInfo = res.userInfo;
         } });
 
     }
@@ -332,14 +335,7 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
       * 生命周期函数--监听页面显示
       */
   onShow: function onShow() {
-    // setTimeout(() => {
-    // 	console.log('onShow', this.$store.state.menu)
-    // }, 1500)
-
-
-    // app.globalData.total2 += 5
-    // this.getUserFoodInfo()
-
+    // console.log("onshow")
     var that = this;
     //获取用户注册信息
     common.wxRequest("get", that.usersUrl + "&userName=" + that.userInfo.nickName, null, function (res) {
@@ -347,7 +343,7 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
       if (res.data[0].address != "" && res.data[0].phone != "") {
         that.URInfo = res.data[0];
       }
-      console.log("onshow");
+
       console.log(that.URInfo);
     });
   } };exports.default = _default;

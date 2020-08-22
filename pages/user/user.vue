@@ -20,13 +20,10 @@
 </template>
 
 <script>
-	//index.js
 	//获取应用实例
-	// const app = getApp()
 	const app = require("../../static/libs/wxApi.js")
 	console.log(app)
 	app.onLaunch()
-	var common = require("../../static/libs/api.js")
 	import regeneratorRuntime from '../../static/libs/runtime.js'
 	var QQMapWX = require('../../static/libs/qqmap-wx-jssdk.js');
 	var qqmapsdk;
@@ -93,16 +90,15 @@
 			      phone: that.userPhone,
 			      address: that.userAddress
 			    } 
-			    common.wxRequest("get",this.usersUrl+'&userName='+that.userInfo.nickName,null,function(res){
+			    that.wxRequest("get",this.usersUrl+'&userName='+that.userInfo.nickName,null,function(res){
 			      console.log(res.data.length)
 			      if(res.data.length!=0){
 					  console.log('record 1 ---',data)
-			        common.wxRequest("put",that.usersUrl+'&userName='+that.userInfo.nickName,data,null)
+			        that.wxRequest("put",that.usersUrl+'&userName='+that.userInfo.nickName,data,null)
 			      }else{
-			        common.wxRequest("post",that.usersUrl,data)
+			        that.wxRequest("post",that.usersUrl,data)
 			      }
 			    })
-			    //common.wxRequest("post",this.usersUrl+'&userName='+this.userInfo.nickName,data)
 			    wx.showToast({
 			      title: '修改成功',
 			      duration: 1500,
@@ -119,7 +115,7 @@
 			  let that = this
 			  //获取当前登录的用户信息
 			  // console.log(this.usersUrl,'--------aa')
-			  let curUserInfo=common.wxRequest("get",this.usersUrl+'&userName='+this.userInfo.nickName,null)
+			  let curUserInfo=that.wxRequest("get",this.usersUrl+'&userName='+this.userInfo.nickName,null)
 			  // console.log(typeof(curUserInfo))
 			  curUserInfo.then(function(obj){
 				  console.log('--------22')

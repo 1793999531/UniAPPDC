@@ -1,8 +1,8 @@
 {
   "pages": [
-    "pages/user/user",
     "pages/index/index",
-    "pages/cart/cart"
+    "pages/cart/cart",
+    "pages/user/user"
   ],
   "subPackages": [],
   "window": {
@@ -36,6 +36,11 @@
         "selectedIconPath": "./static/img/icon_login.jpg"
       }
     ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
   },
   "usingComponents": {}
 }

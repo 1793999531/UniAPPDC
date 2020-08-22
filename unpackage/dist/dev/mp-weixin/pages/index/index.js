@@ -183,19 +183,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-
-//获取应用实例
-var app = __webpack_require__(/*! ../../static/libs/wxApi.js */ 22);
-
-//import regeneratorRuntime from '../../utils/runtime.js'
-var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _default =
+var _default =
 {
   data: function data() {
     return {
@@ -211,121 +199,28 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
 
   },
   methods: {
-    getTotal: function getTotal() {
-      console.log("gettotal index ---");
-      // var tatol = ''
-      // console.log(this.$store.state.menu[0].price)
-      // for(var i in this.$store.state.menu){
-      // 	//console.log(this.$store.state.menu[i].price)
-      // 	tatol+=this.$store.state.menu[i].num*this.$store.state.menu[i].price
-      // }
-      // return 'tatol'
-
-
-    },
     //减少菜品数量
     reduce: function reduce(index) {
-      this.$store.dispatch('countTotal');
-      if (this.$store.state.menu[index].num >= 1) {
+      this.$store.dispatch('wxLogin');
+      var num = this.$store.state.menu[index].num;
+      console.log(num, num !== '');
+      if (num === 1) {
+        this.$store.state.menu[index].num = '';
+      } else if (num !== '') {
         this.$store.state.menu[index].num--;
       }
-    },
-
-    //增加菜品数量
-    plus: function plus(index) {
-
-      this.$store.state.menu[index].num++;
       this.$store.dispatch('countTotal');
     },
-
-    getFoodNum: function getFoodNum() {
-      var that = this;
-      var foodNum = common.wxRequest("get", this.orderUrl + '&userName=' + this.userInfo.nickName, null);
-      foodNum.then(function (res) {
-        console.log("获得食物数量信息");
-        console.log(res);
-        var len = res.data.length;
-        for (var i = 0; i < that.foodNum.length; i++) {
-          //let temp2 = "foodNum[" + i + "].foodNum"
-          that.foodNum[i] = null;
-          // that.setData({
-          //   [temp2]:null
-          // })
-        }
-        if (len != 0) {
-
-          for (var i = 0; i < len; i++) {
-            var selectedFoodId = res.data[i].id; //已选择购买的食物id
-            // let arrIndex = "foodNum[" + (selectedFoodId - 1) + "].foodNum"
-            // that.setData({
-            //   [arrIndex]: res.data[i].foodNum
-            // })
-            that.foodNum[selectedFoodId - 1] = res.data[i].foodNum;
-          }
-        }
-        console.log(that.foodNum);
-        console.log("获得食物数量结束");
-      });
-    },
-    submitOrder: function submitOrder() {
-      //   let that = this;
-      //   var userName = this.userInfo.nickName
-      //   console.log("submit")
-      //   let swiperList = this.swiperList
-      //   console.log(swiperList)
-      //   let userNameData = {
-      //     "userName": userName
-      //   }
-      //   common.wxRequest("post", this.orderFlagUrl + '&userName=' + userName, userNameData)
-      //   for (var i = 0; i < swiperList.length; i++) {
-      //     let curFoodNum = this.foodNum[i].foodNum//当前菜品是否已选择购买数量
-      //     console.log(i + ":" + curFoodNum)
-
-      //     if (curFoodNum != null &&curFoodNum!=0) {
-      //       console.log("common:"+app.globalData.total)
-      //       app.globalData.total+=swiperList[i].price*curFoodNum
-      //       //查询菜品是否已存在
-
-      //       var foodData = {
-      //         id: swiperList[i].id,
-      //         imgSrc:"https://www.lpllfd.cn/static/dingcan/"+ swiperList[i].img,
-      //         name: swiperList[i].name,
-      //         price: swiperList[i].Price,
-      //         foodNum: curFoodNum,
-      //         userName: this.userInfo.nickName
-      //       }
-      //       console.log(foodData)
-      //       common.wxRequest("post", this.orderUrl + '&userName=' + userName+"&id="+swiperList[i].id, foodData,function(res){
-      //         console.log(res)
-      //       })
-
-      //     } else if (curFoodNum == 0) {//查询菜品是否已存在,存在就删除
-      //       common.wxRequest("delete",this.orderUrl+'&userName=' + userName+"&id="+swiperList[i].id,null,function(){
-      //         console.log('delete')
-      //       })
-      //     }
-      //   }
-      wx.showToast({
-        title: '添加成功',
-        duration: 1500 });
-
+    //增加菜品数量
+    plus: function plus(index) {
+      this.$store.state.menu[index].num++;
+      this.$store.dispatch('countTotal');
     } },
 
   computed: {
     swiperList: function swiperList() {
-      console.log('---computed', this.$store.state.menu);
+      // console.log('---computed', this.$store.state.menu)
       return this.$store.state.menu;
-    },
-    cartNum: function cartNum() {
-      console.log('fn  cartNum ---');
-      this.$store.dispatch('getCartInfo');
-      console.log(this.$store.state.cartInfo);
-      if (this.$store.state.cartInfo != null) {
-        return this.$store.state.cartInfo;
-      } else {
-        return '';
-      }
-
     } },
 
   /**
@@ -333,36 +228,9 @@ var common = __webpack_require__(/*! ../../static/libs/api.js */ 23);var _defaul
           */
   onLoad: function () {var _onLoad = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(options) {return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
               console.log("index.vue onload -----");
-              console.log('hhh---', app);
-
               this.$store.dispatch('getSwiperList');
-              // if (app.globalData.userInfo) {
-              //   this.setData({
-              //     userInfo: app.globalData.userInfo,
-              //   })
-              //   console.log(this.userInfo)
-              //   this.getFoodNum()
-              // } else {
-              //   app.userInfoReadyCallback = res => {
-              //     this.setData({
-              //       userInfo: app.globalData.userInfo,
-              //     })
-              //     console.log('callback')
-              //     this.getFoodNum()
-              //   }
-              // }
-              //this.getSwiperList()
-            case 3:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}(),
 
-
-  /**
-                                                                                                                                                             * 生命周期函数--监听页面显示
-                                                                                                                                                             */
-  onShow: function onShow() {
-    this.getFoodNum();
-    this.condition = true;
-    console.log("index onshow---");
-  } };exports.default = _default;
+              this.wxRequest();case 3:case "end":return _context.stop();}}}, _callee, this);}));function onLoad(_x) {return _onLoad.apply(this, arguments);}return onLoad;}() };exports.default = _default;
 
 /***/ }),
 /* 19 */,
